@@ -1,0 +1,70 @@
+keystonedbs:
+  image: mysql:5.7
+  ports:
+    - "3306"
+  volumes:
+    - mysql_keystone_vol/:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: mysecretpassword
+    MYSQL_USER: keystone
+    MYSQL_PASSWORD: mysecretpassword
+    MYSQL_DATABASE: keystone
+
+designatedbs:
+  image: mysql:5.7
+  ports:
+    - "3306"
+  volumes:
+    - mysql_designate_vol:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: mysecretpassword
+    MYSQL_USER: designate
+    MYSQL_PASSWORD: mysecretpassword
+    MYSQL_DATABASE: designate
+
+powerdnsdbs:
+  image: mysql:5.7
+  ports:
+    - "3306"
+  volumes:
+    - mysql_powerdns_vol:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: mysecretpassword
+    MYSQL_USER: powerdns
+    MYSQL_PASSWORD: mysecretpassword
+    MYSQL_DATABASE: powerdns
+
+rabbitmq:
+  image: rabbitmq:3.5.3
+  ports:
+   - "5672"
+   - "15672"
+
+keystoneapp:
+  build: ./keystone
+  links:
+  - keystonedbs
+  ports:
+  - "5000:5000"
+  - "35357"
+  command: /usr/sbin/keystone_start.sh
+
+designatecentral:
+  build: ./designate
+  links:
+  - designatedbs
+  - powerdnsdbs
+  - rabbitmq
+
+designateapi:
+  build: ./designate
+  links:
+  - keystoneapp
+  - rabbitmq
+  ports:
+  - "9001:9001"
+
+#dns:
+
+
+
