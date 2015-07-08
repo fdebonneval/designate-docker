@@ -16,9 +16,9 @@ RUN \
 #    git checkout FETCH_HEAD && \
     git clone https://github.com/openstack/designate.git && \
     cd designate && \
-    virtualenv --no-site-packages .venv
+    virtualenv --no-site-packages .venv && \
     . .venv/bin/activate && \
-    git checkout remotes/origin/stable/juno
+    git checkout remotes/origin/stable/juno && \
     pip install -r requirements.txt -r test-requirements.txt && \
     python setup.py install && \
     cd etc/designate && \
@@ -27,8 +27,8 @@ RUN \
     apt-get install -y libmysqlclient-dev && \
     pip install mysql-python && \
     mkdir /var/log/designate && \
-#    chmod +x /usr/sbin/designate_start.sh && \
-#    cp rootwrap.conf /etc
+    chmod +x /usr/sbin/designate_start.sh && \
+    cp rootwrap.conf /etc
 
 
 # sed -i \
